@@ -1,3 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
-
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Exo+2:wght@300;400;600;700;800&display=swap');
 @import "tailwindcss";
+
+/* ── Variables globales Rick & Morty ── */
+:root {
+  --green:      #97ce4c;
+  --green-glow: #b5f03a;
+  --cyan:       #00d4ff;
+  --cyan-dim:   #00a0be;
+  --magenta:    #ff3c8e;
+  --bg:         #060b0f;
+  --bg2:        #0c1419;
+  --bg3:        #111c24;
+  --card-bg:    rgba(12, 22, 30, 0.85);
+  --border:     rgba(151, 206, 76, 0.18);
+  --text:       #e8f4f0;
+  --text-dim:   rgba(232, 244, 240, 0.55);
+  --radius:     16px;
+  --font-display: 'Bangers', Impact, fantasy;
+  --font-body:    'Exo 2', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

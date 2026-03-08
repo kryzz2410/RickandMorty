@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Reset body para que el fondo oscuro ocupe todo */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #060b0f;
+  color: #e8f4f0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

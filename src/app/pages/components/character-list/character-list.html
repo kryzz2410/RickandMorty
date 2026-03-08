@@ -1,49 +1,103 @@
-<div>
-    <section>
-        <h1>Character List</h1>
+<div class="rm-page">
 
-        @if (characters) {
-            @for (character of characters.results; track character.id) {
-                <article class="rm-card">
-                    <div class="rm-card__media">
-                        <img
-                            class="rm-card__img"
-                            [src]="character.image"
-                            [alt]="character.name"
-                            loading="lazy"
-                        />
-                        <span class="rm-chip rm-chip--alive">{{ character.status }}</span>
-                    </div>
+  <!-- ░░ HEADER ░░ -->
+  <header class="rm-header">
+    <div class="rm-header__portal"></div>
+    <div class="rm-header__content">
+      <div class="rm-logo">
+        <span class="rm-logo__r">R</span><span class="rm-logo__amp">&amp;</span><span class="rm-logo__m">M</span>
+      </div>
+    </div>
+    <div class="rm-header__deco rm-header__deco--1"></div>
+    <div class="rm-header__deco rm-header__deco--2"></div>
+  </header>
 
-                    <div class="rm-card__body">
-                        <h3 class="rm-card__title" [title]="character.name">{{ character.name }}</h3>
+  <!-- ░░ MAIN ░░ -->
+  <main class="rm-main">
 
-                        <div class="rm-card__meta">
-                            <span class="rm-pill">{{ character.species }}</span>
-                            <span class="rm-pill">{{ character.gender }}</span>
-                            <span class="rm-pill">Eps: {{ character.episode.length }}</span>
-                        </div>
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="rm-loading">
+        <div class="rm-portal-spin">
+          <div class="rm-portal-spin__ring"></div>
+          <div class="rm-portal-spin__ring rm-portal-spin__ring--2"></div>
+          <div class="rm-portal-spin__core"></div>
+        </div>
+        <p class="rm-loading__text">Opening portal<span class="rm-dots"></span></p>
+      </div>
+    }
 
-                        <dl class="rm-card__dl">
-                            <div class="rm-row">
-                                <dt>Origin</dt>
-                                <dd>{{ character.origin.name }}</dd>
-                            </div>
-                            <div class="rm-row">
-                                <dt>Location</dt>
-                               
-                            </div>
-                        </dl>
+    <!-- Grid -->
+    @if (characters && !isLoading) {
+      <div class="rm-grid">
+        @for (character of characters.results; track character.id; let i = $index) {
+          <article class="rm-card" [style.--i]="i">
 
-                        <div class="rm-card__actions">
-                            <button class="rm-btn rm-btn--primary" type="button">Ver detalle</button>
-                            <a class="rm-btn" [href]="character.url || '#'" aria-label="Abrir en API" target="_blank" rel="noopener">Abrir</a>
-                        </div>
-                    </div>
-                </article>
-            }
-        } @else {
-            <p>Loading characters...</p>
+            <!-- Image -->
+            <div class="rm-card__img-wrap">
+              <img class="rm-card__img" [src]="character.image" [alt]="character.name" loading="lazy" />
+              <div class="rm-card__img-overlay"></div>
+              <span class="rm-badge" [ngClass]="{
+                'rm-badge--alive':   character.status === 'Alive',
+                'rm-badge--dead':    character.status === 'Dead',
+                'rm-badge--unknown': character.status === 'unknown'
+              }">
+                <span class="rm-badge__dot"></span>
+                {{ character.status }}
+              </span>
+              <span class="rm-card__id">#{{ character.id }}</span>
+            </div>
+
+            <!-- Body -->
+            <div class="rm-card__body">
+              <h2 class="rm-card__name">{{ character.name }}</h2>
+
+              <div class="rm-tags">
+                <span class="rm-tag rm-tag--species">{{ character.species }}</span>
+                <span class="rm-tag rm-tag--gender">{{ character.gender }}</span>
+                <span class="rm-tag">{{ character.episode.length }} eps</span>
+              </div>
+
+              <div class="rm-info">
+                <div class="rm-info__row">
+                  <span class="rm-info__label">Origin</span>
+                  <span class="rm-info__value">{{ character.origin?.name ?? 'Unknown' }}</span>
+                </div>
+                <div class="rm-info__row">
+                  <span class="rm-info__label">Location</span>
+                  <span class="rm-info__value">{{ character.location?.name ?? '—' }}</span>
+                </div>
+              </div>
+
+              <div class="rm-card__actions">
+                <button class="rm-btn rm-btn--primary" type="button">
+                  <span>Ver detalle</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+                <a class="rm-btn rm-btn--ghost" [href]="character.url || '#'" target="_blank" rel="noopener" aria-label="API">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  API
+                </a>
+              </div>
+            </div>
+
+          </article>
         }
-    </section>
+      </div>
+
+      <!-- Pagination -->
+      <div class="rm-pagination">
+        <button class="rm-page-btn" type="button" [disabled]="pageNumber <= 2" (click)="prevPage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Prev
+        </button>
+        <span class="rm-page-indicator">Page {{ pageNumber - 1 }} / {{ characters.info.pages }}</span>
+        <button class="rm-page-btn rm-page-btn--next" type="button" [disabled]="!characters.info.next" (click)="getCharacters()">
+          Next
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    }
+
+  </main>
 </div>

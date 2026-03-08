@@ -10,32 +10,35 @@ import { Characters } from '../../../core/models/characters';
   templateUrl: './character-list.html',
   styleUrl: './character-list.css',
 })
-export class CharacterList implements OnInit { 
+export class CharacterList implements OnInit {
 
   pageNumber: number = 1;
-isLoading: boolean = true;
-characters: Characters | undefined;
+  isLoading: boolean = true;
+  characters: Characters | undefined;
 
-  constructor(private characterService: CharacterServices) { }
+  constructor(private characterService: CharacterServices) {}
+
   ngOnInit(): void {
     this.getCharacters();
   }
 
-  getCharacters() : void  {
+  getCharacters(): void {
+    this.isLoading = true;
     this.characterService
-    .getCharacters(this.pageNumber).pipe(
-      finalize(() => this.isLoading = false)
-    )
-    .subscribe(
-      (response) => {
-      this.characters = response 
-      this.pageNumber++;
-      },
-      error => {
-        console.log('Error en la peticion: ', error);
-      }
-    )
+      .getCharacters(this.pageNumber)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          this.characters = response;
+          this.pageNumber++;
+        },
+        error: (err) => console.error('Error en la petición:', err),
+      });
   }
 
+  prevPage(): void {
+    if (this.pageNumber <= 2) return;
+    this.pageNumber -= 2; // retrocede antes del next automático
+    this.getCharacters();
+  }
 }
- 
